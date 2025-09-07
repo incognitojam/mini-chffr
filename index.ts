@@ -2,9 +2,9 @@ import { Database } from "bun:sqlite";
 
 const db = new Database("chffr.sqlite", { create: true });
 
-db.exec("PRAGMA journal_mode = WAL;");
+db.run("PRAGMA journal_mode = WAL;");
 
-db.exec(`
+db.run(`
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT UNIQUE NOT NULL,
@@ -16,7 +16,7 @@ db.exec(`
   );
 `);
 
-db.exec(`
+db.run(`
   CREATE TABLE IF NOT EXISTS devices (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     dongle_id TEXT UNIQUE NOT NULL,
