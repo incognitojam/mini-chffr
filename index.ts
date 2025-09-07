@@ -37,12 +37,12 @@ class User {
   created_at: string;
   updated_at: string;
 
-  static findById(id: number): User | undefined {
+  static findById(id: number): User | null {
     const query = db.query("SELECT * FROM users WHERE id = ?").as(User);
     return query.get(id);
   }
 
-  static findByProviderAndId(provider: string, provider_id: string): User | undefined {
+  static findByProviderAndId(provider: string, provider_id: string): User | null {
     const query = db.query("SELECT * FROM users WHERE provider = ? AND provider_id = ?").as(User);
     return query.get(provider, provider_id);
   }
