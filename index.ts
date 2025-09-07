@@ -48,11 +48,13 @@ class User {
   }
 
   static create(data: { email: string; provider: string; provider_id: string; name?: string }): User {
-    const query = db.query(`
+    const query = db
+      .query(`
       INSERT INTO users (email, provider, provider_id, name)
       VALUES (?, ?, ?, ?)
       RETURNING *
-    `).as(User);
+    `)
+      .as(User);
     return query.get(data.email, data.provider, data.provider_id, data.name || null);
   }
 }
@@ -76,11 +78,13 @@ class Device {
   }
 
   static create(data: { dongle_id: string; user_id: number; name?: string }): Device {
-    const query = db.query(`
+    const query = db
+      .query(`
       INSERT INTO devices (dongle_id, user_id, name)
       VALUES (?, ?, ?)
       RETURNING *
-    `).as(Device);
+    `)
+      .as(Device);
     return query.get(data.dongle_id, data.user_id, data.name || null);
   }
 }
@@ -94,14 +98,14 @@ const server = Bun.serve({
         if (!authHeader?.startsWith("Bearer ")) {
           return new Response("Unauthorized", { status: 401 });
         }
-        
-        const userId = parseInt(authHeader.replace("Bearer ", ""));
+
+        const userId = parseInt(authHeader.replace("Bearer ", ""), 10);
         const user = User.findById(userId);
-        
+
         if (!user) {
           return new Response("User not found", { status: 404 });
         }
-        
+
         return Response.json(user);
       },
     },
@@ -111,14 +115,14 @@ const server = Bun.serve({
         if (!authHeader?.startsWith("Bearer ")) {
           return new Response("Unauthorized", { status: 401 });
         }
-        
-        const userId = parseInt(authHeader.replace("Bearer ", ""));
+
+        const userId = parseInt(authHeader.replace("Bearer ", ""), 10);
         const user = User.findById(userId);
-        
+
         if (!user) {
           return new Response("User not found", { status: 404 });
         }
-        
+
         const devices = Device.findByUserId(userId);
         return Response.json(devices);
       },
@@ -127,28 +131,28 @@ const server = Bun.serve({
       GET: (req) => {
         const { dongleId } = req.params as { dongleId: string };
         const device = Device.findByDongleId(dongleId);
-        
+
         if (!device) {
           return new Response("Device not found", { status: 404 });
         }
-        
+
         return Response.json(device);
       },
     },
     "/auth/login/:provider": {
       GET: (req) => {
         const { provider } = req.params as { provider: string };
-        
+
         const redirectUrls: Record<string, string> = {
-          google: `https://accounts.google.com/oauth/authorize?client_id=YOUR_GOOGLE_CLIENT_ID&redirect_uri=${encodeURIComponent(`${req.url.split('/auth')[0]}/auth/callback/google`)}&response_type=code&scope=email%20profile`,
-          github: `https://github.com/login/oauth/authorize?client_id=YOUR_GITHUB_CLIENT_ID&redirect_uri=${encodeURIComponent(`${req.url.split('/auth')[0]}/auth/callback/github`)}&scope=user:email`,
+          google: `https://accounts.google.com/oauth/authorize?client_id=YOUR_GOOGLE_CLIENT_ID&redirect_uri=${encodeURIComponent(`${req.url.split("/auth")[0]}/auth/callback/google`)}&response_type=code&scope=email%20profile`,
+          github: `https://github.com/login/oauth/authorize?client_id=YOUR_GITHUB_CLIENT_ID&redirect_uri=${encodeURIComponent(`${req.url.split("/auth")[0]}/auth/callback/github`)}&scope=user:email`,
         };
-        
+
         const redirectUrl = redirectUrls[provider];
         if (!redirectUrl) {
           return new Response("Provider not supported", { status: 400 });
         }
-        
+
         return Response.redirect(redirectUrl);
       },
     },
@@ -157,15 +161,15 @@ const server = Bun.serve({
         const { provider } = req.params as { provider: string };
         const url = new URL(req.url);
         const code = url.searchParams.get("code");
-        
+
         if (!code) {
           return new Response("Authorization code not provided", { status: 400 });
         }
-        
+
         return Response.json({
           message: `OAuth callback for ${provider}`,
           code,
-          note: "This is a placeholder - implement actual OAuth token exchange here"
+          note: "This is a placeholder - implement actual OAuth token exchange here",
         });
       },
     },

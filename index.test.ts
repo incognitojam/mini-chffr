@@ -4,7 +4,7 @@ const BASE_URL = "http://localhost:3000";
 
 test("server starts and responds", async () => {
   const response = await fetch(`${BASE_URL}/v1/me`, {
-    headers: { "Authorization": "Bearer 999" }
+    headers: { Authorization: "Bearer 999" },
   });
   expect(response.status).toBe(404); // User not found is expected for non-existent user
 });
@@ -28,8 +28,8 @@ test("GET /v1.1/devices/:dongleId returns 404 for non-existent device", async ()
 });
 
 test("OAuth login redirects for supported providers", async () => {
-  const response = await fetch(`${BASE_URL}/auth/login/google`, { 
-    redirect: "manual" 
+  const response = await fetch(`${BASE_URL}/auth/login/google`, {
+    redirect: "manual",
   });
   expect(response.status).toBe(302);
   expect(response.headers.get("location")).toContain("accounts.google.com");
