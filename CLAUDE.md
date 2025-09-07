@@ -21,7 +21,7 @@ Default to using Bun instead of Node.js.
 
 ## Testing
 
-Use `bun test` to run tests.
+Use `./test.sh` to run tests. This script installs dependencies, runs biome checks, starts the server, runs tests, and cleans up.
 
 ```ts#index.test.ts
 import { test, expect } from "bun:test";

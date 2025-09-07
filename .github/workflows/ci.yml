@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  merge_group:
+    types: [checks_requested]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+    - uses: actions/checkout@v5
+    - uses: oven-sh/setup-bun@v2
+
+    - name: Run tests
+      run: ./test.sh
