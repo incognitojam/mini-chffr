@@ -35,7 +35,7 @@ To run:
 
 ```bash
 bun --hot index.ts    # Start server
-bun test             # Run tests
+./test.sh             # Run full test suite
 ```
 
 **Status:** Backend is ready for web app integration. OAuth still needs actual token exchange implementation, and you'll need to add proper JWT tokens and device registration endpoints when ready to connect openpilot devices.
