@@ -9,7 +9,7 @@ SERVER_PID=$!
 
 timeout=30
 while [ $timeout -gt 0 ]; do
-  if curl -f http://localhost:3000/v1.1/devices/test >/dev/null 2>&1; then
+  if curl -s http://localhost:3000/v1.1/devices/test >/dev/null 2>&1; then
     break
   fi
   sleep 1
