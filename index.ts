@@ -1,41 +1,34 @@
 import "./db/database";
 import { Device, User } from "./db/models";
 
+const getUserFromRequest = <T extends Bun.BunRequest>(req: T): User => {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) {
+    throw new Response("Unauthorized", { status: 401 });
+  }
+
+  const userId = parseInt(authHeader.replace("Bearer ", ""), 10);
+  const user = User.findById(userId);
+  if (!user) {
+    throw new Response("User not found", { status: 404 });
+  }
+
+  return user;
+};
+
 const server = Bun.serve({
   port: 3000,
   routes: {
     "/v1/me": {
       GET: (req) => {
-        const authHeader = req.headers.get("Authorization");
-        if (!authHeader?.startsWith("Bearer ")) {
-          return new Response("Unauthorized", { status: 401 });
-        }
-
-        const userId = parseInt(authHeader.replace("Bearer ", ""), 10);
-        const user = User.findById(userId);
-
-        if (!user) {
-          return new Response("User not found", { status: 404 });
-        }
-
+        const user = getUserFromRequest(req);
         return Response.json(user);
       },
     },
     "/v1/me/devices": {
       GET: (req) => {
-        const authHeader = req.headers.get("Authorization");
-        if (!authHeader?.startsWith("Bearer ")) {
-          return new Response("Unauthorized", { status: 401 });
-        }
-
-        const userId = parseInt(authHeader.replace("Bearer ", ""), 10);
-        const user = User.findById(userId);
-
-        if (!user) {
-          return new Response("User not found", { status: 404 });
-        }
-
-        const devices = Device.findByUserId(userId);
+        const user = getUserFromRequest(req);
+        const devices = Device.findByUserId(user.id);
         return Response.json(devices);
       },
     },
@@ -43,11 +36,9 @@ const server = Bun.serve({
       GET: (req) => {
         const { dongleId } = req.params as { dongleId: string };
         const device = Device.findByDongleId(dongleId);
-
         if (!device) {
           return new Response("Device not found", { status: 404 });
         }
-
         return Response.json(device);
       },
     },
@@ -89,6 +80,17 @@ const server = Bun.serve({
   development: {
     hmr: true,
     console: true,
+  },
+  error(error) {
+    if (error instanceof Response) {
+      return error;
+    }
+    return new Response(`Internal error: ${error.message}`, {
+      status: 500,
+      headers: {
+        "Content-Type": "text/plain",
+      },
+    });
   },
 });
 
