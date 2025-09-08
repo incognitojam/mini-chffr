@@ -67,7 +67,7 @@ class Device {
   created_at: string;
   updated_at: string;
 
-  static findByDongleId(dongle_id: string): Device | undefined {
+  static findByDongleId(dongle_id: string): Device | null {
     const query = db.query("SELECT * FROM devices WHERE dongle_id = ?").as(Device);
     return query.get(dongle_id);
   }
