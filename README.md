@@ -31,6 +31,16 @@ To install dependencies:
 bun install
 ```
 
+Set up environment variables:
+
+```bash
+cp .env.example .env
+```
+
+Update `.env` with your OAuth client IDs:
+- `GOOGLE_CLIENT_ID`: Your Google OAuth client ID
+- `GITHUB_CLIENT_ID`: Your GitHub OAuth client ID
+
 To run:
 
 ```bash
