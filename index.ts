@@ -47,8 +47,8 @@ const server = Bun.serve({
         const { provider } = req.params as { provider: string };
 
         const redirectUrls: Record<string, string> = {
-          google: `https://accounts.google.com/oauth/authorize?client_id=YOUR_GOOGLE_CLIENT_ID&redirect_uri=${encodeURIComponent(`${req.url.split("/auth")[0]}/auth/callback/google`)}&response_type=code&scope=email%20profile`,
-          github: `https://github.com/login/oauth/authorize?client_id=YOUR_GITHUB_CLIENT_ID&redirect_uri=${encodeURIComponent(`${req.url.split("/auth")[0]}/auth/callback/github`)}&scope=user:email`,
+          google: `https://accounts.google.com/oauth/authorize?client_id=${process.env.GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(`${req.url.split("/auth")[0]}/auth/callback/google`)}&response_type=code&scope=email%20profile`,
+          github: `https://github.com/login/oauth/authorize?client_id=${process.env.GITHUB_CLIENT_ID}&redirect_uri=${encodeURIComponent(`${req.url.split("/auth")[0]}/auth/callback/github`)}&scope=user:email`,
         };
 
         const redirectUrl = redirectUrls[provider];
